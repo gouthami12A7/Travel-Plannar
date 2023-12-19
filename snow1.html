@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snow Adventures</title>
+    <style>
+        /* Combine the styles from both files */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #searchContainer {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #budgetBar {
+            margin-bottom: 10px;
+        }
+
+        #destinationList {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .destination {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 200px; /* Adjusted width for the grid layout */
+            margin: 10px;
+        }
+
+        .destination img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .destination p {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .destination button {
+            width: 100%;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .destination button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            width: 80%;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #map {
+      width: 100%;
+      height: 400px;
+      border: 1px solid #ccc;
+    }
+        button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+  background-color: #333;
+  padding: 10rem 0;
+  font-size: 1.4rem;
+  color: #f7f7f7; }
+  @media only screen and (max-width: 56.25em) {
+    .footer {
+      padding: 8rem 0; } }
+  @media only screen and (max-width: 26.25em) {
+    .footer {
+      padding: 6rem 0; } }
+  .footer__logo-box {
+    text-align: center;
+    margin-bottom: 8rem; }
+    @media only screen and (max-width: 56.25em) {
+      .footer__logo-box {
+        margin-bottom: 4rem; } }
+  .footer__logo {
+    width: 15rem; }
+  .footer__navigation {
+    border-top: 1px solid #777;
+    padding-top: 2rem;
+    display: inline-block; }
+    @media only screen and (max-width: 56.25em) {
+      .footer__navigation {
+        width: 100%; } }
+  .footer__list {
+    list-style: none; }
+  .footer__item {
+    display: inline-block; }
+    .footer__item:not(:last-child) {
+      margin-right: 1.5rem; }
+  .footer__link:link, .footer__link:visited {
+    color: #f7f7f7;
+    background-color: #333;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-block;
+    transition: all .2s; }
+  .footer__link:hover, .footer__link:active {
+    color: #55c57a;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.4);
+    transform: rotate(5deg) scale(1.3); }
+  .footer__copyright {
+    border-top: 1px solid #777;
+    padding-top: 2rem;
+    width: 80%;
+    float: right; }
+    @media only screen and (max-width: 56.25em) {
+      .footer__copyright {
+        width: 100%;
+        float: none; } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The Snow Adventures</h1>
+    </header>
+
+    <div id="searchContainer">
+        <input type="text" id="searchBar" placeholder="Search for a destination...">
+        <button onclick="searchDestinations()">Search</button>
+    </div>
+
+    <div id="searchContainer">
+        <input type="number" id="budgetBar" placeholder="Enter your budget...">
+        <button onclick="searchByBudget()">Search by Budget</button>
+    </div>
+
+    <div id="destinationList">
+        <!-- Destination items will be dynamically added here -->
+    </div>
+    
+
+    <script>
+        const destinations = [
+            { name: 'Offbeat Kedarkantha Trekking, Uttarakhand', image: 'https://media2.thrillophilia.com/images/photos/000/363/802/original/1608207806_kedarkantha-summit.jpg?width=975&height=600', price: 100 },
+            { name: 'Goecha La Trek', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2020/01/Goecha-La-Trek.jpg', price: 80 },
+            { name: 'Nag Tibba Winter Trek', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2016/10/Ideal-Nag-Tibba-Trek-Itinerary.jpg', price: 120 },
+            // ... (other destinations with prices)
+            { name: 'Kuari Pass Winter Trek', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2020/01/Kuari-Pass-Trek.jpg', price: 100 },
+            { name: 'Lachen - Sikkim', image: 'https://img.traveltriangle.com/blog/wp-content/uploads/2023/06/shutterstock_1414301243.jpg', price: 200 },
+            { name: 'Lonavala - Maharashtra', image: 'https://img.traveltriangle.com/blog/wp-content/uploads/2023/06/shutterstock_1851754738.jpg', price: 300 },
+            { name: 'Saputara – Gujarat', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2020/01/saputara1.jpg', price: 400 },
+            // Add more destinations in India as needed
+            { name: 'Ladakh – Jammu & Kashmir', image: 'https://img.traveltriangle.com/blog/wp-content/uploads/2023/06/shutterstock_1754074454.jpg', price: 120 },
+            { name: 'Coonoor – Tamil Nadu', image: 'https://img.traveltriangle.com/blog/wp-content/uploads/2023/06/Conoor.jpg', price: 120 },
+            { name: 'The Green Lake Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/The-Green-Lake-Trek.jpg', price: 300 },
+            { name: 'Dzongri Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Dzongri-Trek.jpg', price: 200 },
+            { name: 'Annapurna Base Camp', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Annapurna-Base-Camp-1024x546.jpg', price: 300 },
+            { name: 'Deoria tal and Chandrashila Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Deoria-tal-and-Chandrashila-Trekking.jpg', price: 140 },
+            
+            { name: 'Goecha La Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Goecha-La-Trek.jpg', price: 50 },
+            { name: 'Gangotri Glacier Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Gangotri-Glacier-Trek-1024x643.jpg', price: 150 },
+            { name: 'Frozen River Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Frozen-River-Trek.jpg', price: 150 },
+            
+            
+            { name: 'Kolahoi Glacier Trek', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2021/02/Kolahoi-Glacier-Trek-1-1024x553.jpg', price: 500 },
+            { name: 'Everest Base Camp Trek', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/everest-base-camp-trek-nepal-shutterstock_583073020-1024x683.jpg', price: 200 },
+            { name: 'Fitz Roy Trek', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/fitz-roy-trek-argentina-shutterstock_365021891-1024x679.jpg', price: 600 },
+            { name: 'Mount Kilimanjaro', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/mount-kilimanjaro-tanzania-africa-shutterstock_533892373-1024x679.jpg', price: 120 },
+            // Add more destinations in India as needed
+            { name: 'Baltoro Glacier & K2', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/baltoro-glacier-k2-pakistan-shutterstock_432189190-1024x680.jpg', price: 120 },
+            { name: 'Scottish National Trail', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/sierra-high-route-usa-shutterstock_722530882-1024x683.jpg', price: 200 },
+            { name: 'Sierra High Route', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/mount-kailash-trek-china-shutterstock_173894930-1024x683.jpg', price: 120 },
+            
+            
+            { name: 'Te Araroa Trail', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/bf/fc/92/hanging-bridge.jpg?w=500&h=-1&s=1', price: 120 },
+            { name: 'North Drakensberg Traverse', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/arctic-circle-trail-greenland-shutterstock_529106824-1024x683.jpg', price: 150 },
+            { name: 'Snowman Trek', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/snowman-trek-bhutan-shutterstock_615201302-1024x683.jpg', price: 140 },
+            { name: 'Sonamarg: For Couples And Families Alike', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2019/02/Sonamarg.jpg', price: 200 },
+            { name: 'Auli: For Skiing And Snowboarding', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2019/02/Auli.jpg', price: 200 },
+        
+        ];
+
+        // Functions from the first script
+        const displayDestinations = (items) => {
+            const destinationList = document.getElementById('destinationList');
+            destinationList.innerHTML = items.map((item) => {
+                return `
+                    <div class='destination'>
+                        <img src='${item.image}' alt='${item.name}'>
+                        <p><strong>${item.name}</strong></p>
+                        <p>Price: $${item.price}.00</p>
+                        <button onclick="bookNow('${item.name}')">Book Now</button>
+                        
+                    </div>
+                `;
+            }).join('');
+        };
+        
+
+        const searchDestinations = () => {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const filteredDestinations = destinations.filter((destination) => {
+                return destination.name.toLowerCase().includes(searchTerm);
+            });
+            displayDestinations(filteredDestinations);
+        };
+
+        // Functions from the second script
+        const searchByBudget = () => {
+            const budget = parseInt(document.getElementById('budgetBar').value);
+            if (!isNaN(budget)) {
+                const filteredDestinations = destinations.filter((destination) => {
+                    return destination.price <= budget;
+                });
+                displayDestinations(filteredDestinations);
+            } else {
+                alert('Please enter a valid budget.');
+            }
+        };
+
+        const bookNow = (destinationName) => {
+            const bookingPageURL = 'payment.html';
+
+
+            const destinationURL = `${bookingPageURL}?destination=${encodeURIComponent(destinationName)}`;
+
+            window.location.href = destinationURL;
+            
+        };
+
+        // Display all destinations initially
+        displayDestinations(destinations);
+    </script>
+    <section id="map-integration">
+      <h2>Map Integration</h2>
+      <div id="map">
+        <!-- Display map with travel history -->
+        <!-- Implement map integration using a mapping library or API -->
+      </div>
+    </section>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuM34lwBDROt_8zt0GirMLgvZgyOMzYHw&callback=initMap" async defer></script>
+    <script>function initMap() {
+      // Check if the browser supports Geolocation
+      if (navigator.geolocation) {
+        // Get the current location
+        navigator.geolocation.getCurrentPosition(function (position) {
+          var userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+    
+          // Create a new map centered at the user's location
+          var map = new google.maps.Map(document.getElementById('map'), {
+            center: userLocation,
+            zoom: 14 // Adjust the zoom level as needed
+          });
+    
+          // Add a marker at the user's location
+          var marker = new google.maps.Marker({
+            position: userLocation,
+            map: map,
+            title: 'Your Location'
+          });
+        }, function () {
+          // Handle Geolocation errors
+          handleLocationError(true, infoWindow, map.getCenter());
+        });
+      } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+      }
+    }
+    
+    // Function to handle Geolocation errors
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+        'Error: The Geolocation service failed.' :
+        'Error: Your browser doesn\'t support geolocation.');
+      infoWindow.open(map);
+    }
+    </script>
+    <footer class="footer">
+        <div class="footer__logo-box">
+          <!-- === Art Direction and Density Switching === -->
+          <picture class="footer__logo">
+            <source
+              srcset="
+              C:\Users\Devarakonda\OneDrive\Desktop\mini project\logo-green-small-1x.png,
+              C:\Users\Devarakonda\OneDrive\Desktop\mini project\logo-green-small-2x.png
+              "
+              media="(max-width: 37.5em)"
+            />
+            <img
+            
+            src="C:\Users\Devarakonda\OneDrive\Desktop\mini project\logo-white.png"/>
+            
+          
+          <center><h1>PATHWAY</h1></center>
+        
+          </picture>
+        </div>
+        <div class="row">
+          <div class="col-1-of-2">
+            <div class="footer__navigation">
+              <ul class="footer__list">
+                
+                <li class="footer__item">
+                  <a href="#" class="footer__link">Contact us</a>
+                </li>
+               
+                <li class="footer__item">
+                  <a href="#" class="footer__link">Privacy policy</a>
+                </li>
+                <li class="footer__item">
+                  <a href="#" class="footer__link">Terms</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+        </div>
+      </footer>
+</body>
+</html>
