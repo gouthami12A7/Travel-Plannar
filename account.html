@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    section {
+      margin-bottom: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
+      border: 1px solid #ccc;
+    }
+
+    #weather {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e1f7d5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.destination-image {
+  max-width: 20%;
+  height: 20%;
+  margin: 2px;
+}
+#weather p {
+  font-size: 16px;
+  color: #333;
+}
+
+#social-feed {
+  margin-top: 20px;
+}
+
+#social-feed img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+#social-feed .post {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+#social-feed .post p {
+  font-size: 14px;
+  color: #333;
+}
+
+#social-feed .post small {
+  font-size: 12px;
+  color: #888;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Travel Dashboard</h1>
+  </header>
+
+  <main>
+    <section id="user-profile">
+      <h2>User Profile</h2>
+      <div>
+        <p>Welcome, [Username]! <!-- Replace [Username] with the actual username --></p>
+        <!-- Display user information like name, profile picture, etc. -->
+        
+        <!-- Add more user details as needed -->
+      </div>
+    </section>
+
+    <section id="bookings">
+      <h2>Bookings</h2>
+      <div id="user-bookings">
+        <!-- Display a list of user's bookings with details -->
+      </div>
+    </section>
+
+    <section id="search-filters">
+      <h2>Search and Filters</h2>
+      <div>
+        <!-- Add a search bar and filters for destinations -->
+        <input type="text" id="searchInput" placeholder="Search for a destination...">
+        <button onclick="searchDestinations()">Search</button>
+    
+        <label>Filter by:</label>
+        <select id="destinationFilter">
+          <option value="all">All Destinations</option>
+          <option value="beach">Beach</option>
+          <option value="mountain">Mountain</option>
+          <option value="city">City</option>
+          <!-- Add more filters as needed -->
+        </select>
+        <section id="destination-images">
+          <h2>Destination Images</h2>
+          <div id="image-container"></div>
+        </section>
+      </div>
+    </section>
+      
+
+    <section id="travel-recommendations">
+      <h2>Travel Recommendations</h2>
+      <div id="recommended-destinations">
+        <!-- Display recommended destinations based on user preferences -->
+      </div>
+    </section>
+
+    
+
+    <section id="map-integration">
+      <h2>Map Integration</h2>
+      <div id="map">
+        <!-- Display map with travel history -->
+        <!-- Implement map integration using a mapping library or API -->
+      </div>
+    </section>
+
+    <section id="weather-info">
+      <h2>Weather Information</h2>
+      <div id="weather">
+        <p id="currentWeather"></p>
+      </div>
+    </section>
+
+    <section id="social-integration">
+        <h2>Social Integration</h2>
+        <div id="social-feed">
+          <!-- Integrate social features using social media APIs -->
+          <!-- For example, display a sample social media feed -->
+          <div class="post">
+            <img src="C:\Users\Devarakonda\OneDrive\Desktop\mini project\underwater.webp" alt="Post Image">
+            <p>This is a sample post.</p>
+            <small>Posted on January 1, 2023</small>
+          </div>
+          <!-- Add more posts as needed -->
+        </div>
+      </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 Travel Dashboard</p>
+  </footer>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuM34lwBDROt_8zt0GirMLgvZgyOMzYHw&callback=initMap" async defer></script>
+  <script>
+    function initMap() {
+    // Check if the browser supports Geolocation
+    if (navigator.geolocation) {
+      // Get the current location
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var userLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        // Create a new map centered at the user's location
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: userLocation,
+          zoom: 14 // Adjust the zoom level as needed
+        });
+
+        // Add a marker at the user's location
+        var marker = new google.maps.Marker({
+          position: userLocation,
+          map: map,
+          title: 'Your Location'
+        });
+      }, function () {
+        // Handle Geolocation errors
+        handleLocationError(true, infoWindow, map.getCenter());
+      });
+    } else {
+      // Browser doesn't support Geolocation
+      handleLocationError(false, infoWindow, map.getCenter());
+    }
+  }
+
+  // Function to handle Geolocation errors
+  function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+      'Error: The Geolocation service failed.' :
+      'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
+  }
+
+  function getCurrentWeather() {
+      var apiKey = '6c0fbfb3faf8e4a6ded93ac391bb6c25'; // Replace with your OpenWeatherMap API key
+      var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+      // Get the user's current location (you can use the same geolocation logic from the previous example)
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+
+        // Make a request to the OpenWeatherMap API
+        fetch(`${weatherUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
+          .then(response => response.json())
+          .then(data => {
+            // Extract and display relevant weather information
+            var weatherDetails = `Current Weather: ${data.weather[0].description}, ${Math.round(data.main.temp)}°C`;
+            document.getElementById('currentWeather').textContent = weatherDetails;
+          })
+          .catch(error => {
+            console.error('Error fetching weather data:', error);
+            document.getElementById('currentWeather').textContent = 'Unable to fetch weather data';
+          });
+      }, function () {
+        console.error('Error getting user location');
+        document.getElementById('currentWeather').textContent = 'Unable to get user location';
+      });
+    }
+
+    // Call the function when the page loads
+    getCurrentWeather();
+    
+    var destinationImages = {
+      'all': ['https://hblimg.mmtcdn.com/content/hubble/img/goa/mmt/destination/m_destination-goa-landscape_l_400_640.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/mount%20abu/mmt/destination/m_mount-abu-landscape_l_329_527.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/lakshadweep/mmt/destination/m_Lakshadweep_l_580_870.jpg', 'https://foodandtravel.com/imager/hours/219609/Ministry-of-Tourism-Govt-of-India-595161_Taj-Mahal-Uttar-Pradesh-Aerial_821631bb23140209ea99c8f810f75634.jpg'],
+      'beach': ['https://hblimg.mmtcdn.com/content/hubble/img/goa/mmt/destination/m_destination-goa-landscape_l_400_640.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/lakshadweep/mmt/destination/m_Lakshadweep_l_580_870.jpg'],
+      'mountain': ['https://hblimg.mmtcdn.com/content/hubble/img/mount%20abu/mmt/destination/m_mount-abu-landscape_l_329_527.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/alleppey/mmt/destination/m_destination-alleppey-landscape_l_400_640.jpg'],
+      'city': ['https://foodandtravel.com/imager/hours/219609/Ministry-of-Tourism-Govt-of-India-595161_Taj-Mahal-Uttar-Pradesh-Aerial_821631bb23140209ea99c8f810f75634.jpg', 'https://www.holidify.com/images/cmsuploads/compressed/attr_1568_20191102174918.jpg'],
+      // Add more mappings as needed
+    };
+    function searchDestinations() {
+  var searchInput = document.getElementById('searchInput').value.toLowerCase();
+  var filterValue = document.getElementById('destinationFilter').value;
+
+  // Get the image container
+  var imageContainer = document.getElementById('image-container');
+
+  // Clear previous images
+  imageContainer.innerHTML = '';
+
+  // Fetch images based on the filter
+  var imagesToShow = destinationImages[filterValue] || destinationImages['all'];
+
+  // Filter images based on the search input
+  var filteredImages = imagesToShow.filter(function (imageUrl) {
+    return imageUrl.toLowerCase().includes(searchInput.toLowerCase());
+  });
+
+  // Display filtered images in the container
+  filteredImages.forEach(function (imageUrl) {
+    var imgElement = document.createElement('img');
+    imgElement.src = imageUrl;
+    imgElement.alt = 'Destination Image';
+    imgElement.className = 'destination-image';
+    imageContainer.appendChild(imgElement);
+  });
+}
+
+
+// Example user object (replace this with your actual user data)
+const user = {
+  username: 'john_doe',
+  name: 'John Doe',
+  email: 'john@example.com',
+  profilePicture: 'profile.jpg',
+  // Add more user details as needed
+};
+
+// Function to update the user profile section
+function updateUserProfile() {
+  const userProfileSection = document.getElementById('user-profile');
+  
+  // Update the welcome message
+  const welcomeMessage = `Welcome, ${user.name}!`;
+  userProfileSection.querySelector('p').textContent = welcomeMessage;
+
+  // Update the profile picture
+  const profilePicture = userProfileSection.querySelector('img');
+  profilePicture.src = user.profilePicture;
+  profilePicture.alt = 'User Profile';
+
+  // Display other user details
+  userProfileSection.querySelector('p:nth-child(3)').textContent = `Name: ${user.name}`;
+  userProfileSection.querySelector('p:nth-child(4)').textContent = `Email: ${user.email}`;
+  // Add more lines to display additional user details
+}
+
+// Call the function to update user profile when the page loads
+updateUserProfile();
+
+
+
+
+console.log('Search Input:', searchInput);
+console.log('Filtered Images:', filteredImages);
+
+
+
+
+
+  console.log('Script loaded.');
+  </script>
+   <script>
+    // Example: Retrieve user's bookings from an API or database
+    function getUserBookings() {
+      // Simulated data, replace this with actual data retrieval logic
+      return [
+        { destination: 'Paris', date: '2023-05-15' },
+        { destination: 'Tokyo', date: '2023-06-20' },
+        // Add more bookings as needed
+      ];
+    }
+
+    // Function to update the bookings section
+    function updateUserBookings() {
+      var userBookings = getUserBookings();
+
+      // Get the container for user bookings
+      var container = document.getElementById('user-bookings');
+
+      // Clear previous content
+      container.innerHTML = '';
+
+      // Create an unordered list
+      var ul = document.createElement('ul');
+
+      // Add each booking as a list item
+      userBookings.forEach(function (booking) {
+        var li = document.createElement('li');
+        li.textContent = `Booking - ${booking.destination}, ${booking.date}`;
+        ul.appendChild(li);
+      });
+
+      // Append the list to the container
+      container.appendChild(ul);
+    }
+
+    // Call the function when the page loads
+    updateUserBookings();
+  </script>
+  <script>
+    // Example: Retrieve recommended destinations from an API or database
+    function getRecommendedDestinations() {
+      // Simulated data, replace this with actual data retrieval logic
+      return ['Maldives', 'New Zealand', 'Tokyo', 'Paris', 'Bali'];
+    }
+
+    // Function to update the recommended destinations section
+    function updateRecommendedDestinations() {
+      var recommendedDestinations = getRecommendedDestinations();
+
+      // Get the container for recommended destinations
+      var container = document.getElementById('recommended-destinations');
+
+      // Clear previous content
+      container.innerHTML = '';
+
+      // Create an unordered list
+      var ul = document.createElement('ul');
+
+      // Add each recommended destination as a list item
+      recommendedDestinations.forEach(function (destination) {
+        var li = document.createElement('li');
+        li.textContent = destination;
+        ul.appendChild(li);
+      });
+
+      // Append the list to the container
+      container.appendChild(ul);
+    }
+
+    // Call the function when the page loads
+    updateRecommendedDestinations();
+  </script>
+  
+  <script>
+    var destinationImages = {
+      'all': ['https://hblimg.mmtcdn.com/content/hubble/img/goa/mmt/destination/m_destination-goa-landscape_l_400_640.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/mount%20abu/mmt/destination/m_mount-abu-landscape_l_329_527.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/lakshadweep/mmt/destination/m_Lakshadweep_l_580_870.jpg', 'https://foodandtravel.com/imager/hours/219609/Ministry-of-Tourism-Govt-of-India-595161_Taj-Mahal-Uttar-Pradesh-Aerial_821631bb23140209ea99c8f810f75634.jpg'],
+      'beach': ['https://hblimg.mmtcdn.com/content/hubble/img/goa/mmt/destination/m_destination-goa-landscape_l_400_640.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/lakshadweep/mmt/destination/m_Lakshadweep_l_580_870.jpg'],
+      'mountain': ['https://hblimg.mmtcdn.com/content/hubble/img/mount%20abu/mmt/destination/m_mount-abu-landscape_l_329_527.jpg', 'https://hblimg.mmtcdn.com/content/hubble/img/alleppey/mmt/destination/m_destination-alleppey-landscape_l_400_640.jpg'],
+      'city': ['https://foodandtravel.com/imager/hours/219609/Ministry-of-Tourism-Govt-of-India-595161_Taj-Mahal-Uttar-Pradesh-Aerial_821631bb23140209ea99c8f810f75634.jpg', 'https://www.holidify.com/images/cmsuploads/compressed/attr_1568_20191102174918.jpg'],
+      // Add more mappings as needed
+    };
+  
+    function searchDestinations() {
+      var searchInput = document.getElementById('searchInput').value.toLowerCase();
+      var filterValue = document.getElementById('destinationFilter').value;
+  
+      // Get the image container
+      var imageContainer = document.getElementById('image-container');
+  
+      // Clear previous images
+      imageContainer.innerHTML = '';
+  
+      // Fetch images based on the filter
+      var imagesToShow = destinationImages[filterValue] || destinationImages['all'];
+  
+      // Filter images based on the search input
+      var filteredImages = imagesToShow.filter(function (imageUrl) {
+        return imageUrl.toLowerCase().includes(searchInput);
+      });
+  
+      // Display filtered images in the container
+      filteredImages.forEach(function (imageUrl) {
+        var imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
+        imgElement.alt = 'Destination Image';
+        imgElement.className = 'destination-image';
+        imageContainer.appendChild(imgElement);
+      });
+    }
+  </script>
+  
+</body>
+</html>
