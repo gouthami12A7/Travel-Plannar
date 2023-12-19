@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Hikers</title>
+    <style>
+        /* Combine the styles from both files */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #searchContainer {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #budgetBar {
+            margin-bottom: 10px;
+        }
+
+        #destinationList {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .destination {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 200px; /* Adjusted width for the grid layout */
+            margin: 10px;
+        }
+
+        .destination img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .destination p {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .destination button {
+            width: 100%;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .destination button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            width: 80%;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #map {
+      width: 100%;
+      height: 400px;
+      border: 1px solid #ccc;
+    }
+        button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+  background-color: #333;
+  padding: 10rem 0;
+  font-size: 1.4rem;
+  color: #f7f7f7; }
+  @media only screen and (max-width: 56.25em) {
+    .footer {
+      padding: 8rem 0; } }
+  @media only screen and (max-width: 26.25em) {
+    .footer {
+      padding: 6rem 0; } }
+  .footer__logo-box {
+    text-align: center;
+    margin-bottom: 8rem; }
+    @media only screen and (max-width: 56.25em) {
+      .footer__logo-box {
+        margin-bottom: 4rem; } }
+  .footer__logo {
+    width: 15rem; }
+  .footer__navigation {
+    border-top: 1px solid #777;
+    padding-top: 2rem;
+    display: inline-block; }
+    @media only screen and (max-width: 56.25em) {
+      .footer__navigation {
+        width: 100%; } }
+  .footer__list {
+    list-style: none; }
+  .footer__item {
+    display: inline-block; }
+    .footer__item:not(:last-child) {
+      margin-right: 1.5rem; }
+  .footer__link:link, .footer__link:visited {
+    color: #f7f7f7;
+    background-color: #333;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-block;
+    transition: all .2s; }
+  .footer__link:hover, .footer__link:active {
+    color: #55c57a;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.4);
+    transform: rotate(5deg) scale(1.3); }
+  .footer__copyright {
+    border-top: 1px solid #777;
+    padding-top: 2rem;
+    width: 80%;
+    float: right; }
+    @media only screen and (max-width: 56.25em) {
+      .footer__copyright {
+        width: 100%;
+        float: none; } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The Forest Hikers</h1>
+    </header>
+
+    <div id="searchContainer">
+        <input type="text" id="searchBar" placeholder="Search for a destination...">
+        <button onclick="searchDestinations()">Search</button>
+    </div>
+
+    <div id="searchContainer">
+        <input type="number" id="budgetBar" placeholder="Enter your budget...">
+        <button onclick="searchByBudget()">Search by Budget</button>
+    </div>
+
+    <div id="destinationList">
+        <!-- Destination items will be dynamically added here -->
+    </div>
+    
+
+    <script>
+        const destinations = [
+            { name: 'The Grand Indrahar Pass - Himachal Pradesh', image: 'https://media2.thrillophilia.com/images/photos/000/046/277/original/dhauladhar-20range-20by-20raman-20sharma-20flickr.jpg?w=768&h=460&dpr=1.0', price: 100 },
+            { name: 'Trekking in Manali - Himachal Pradesh', image: 'https://media2.thrillophilia.com/images/photos/000/046/283/original/640px-river-beas-2c-manali.jpg?w=768&h=460&dpr=1.0', price: 80 },
+            { name: 'Seven Sisters Trek - Himachal Pradesh', image: 'https://media2.thrillophilia.com/images/photos/000/046/284/original/goodbye-20by-20deepak-20bhatia-20flickr.jpg?w=768&h=460&dpr=1.0', price: 120 },
+            // ... (other destinations with prices)
+            { name: 'Hampta Pass Trek, Manali', image: 'https://media1.thrillophilia.com/filestore/4ebwp72h5glgr0umhey425brwqn3_shutterstock_1476181970.jpg?w=768&h=460&dpr=1.0', price: 100 },
+            { name: 'Doon Valley Trek, Garhwal, Uttarakhand', image: 'https://media2.thrillophilia.com/images/photos/000/046/279/original/a-20view-20of-20dun-20valley-20from-20ropeway-20station-20at-20sahastradhara-2c-20dehradun-20by-20dr-20umesh-20behari-20mathur-20flickr.jpg?w=768&h=460&dpr=1.0', price: 200 },
+            { name: 'Tiger Hill, Darjeeling, West Bengal', image: 'https://media2.thrillophilia.com/images/photos/000/046/274/original/view-of-the-himalayas-and-the-kanchenjunga-2c-from-tiger-hill-2c-darjeeling.jpg?w=768&h=460&dpr=1.0', price: 300 },
+            { name: 'Darjeeling to Kurseong Trek via Old Military Road, West Bengal', image: 'https://media2.thrillophilia.com/images/photos/000/046/276/original/darjeeling-20ankit-20agarwal-20flickr-20-2-.jpg?w=768&h=460&dpr=1.0', price: 400 },
+            // Add more destinations in India as needed
+            { name: 'Nagalapuram Trek, Chittoor, Andhra Pradesh', image: 'https://media2.thrillophilia.com/images/photos/000/046/281/original/nagalapuram-parda-popint-20ravi-20s-20ghosh-20wiki.jpg?w=768&h=460&dpr=1.0', price: 120 },
+            { name: 'Araku Valley Trek, Andhra Pradesh', image: 'https://media2.thrillophilia.com/images/photos/000/046/282/original/araku-20valley-20by-20roadconnoisseur-20flickr.jpg?w=768&h=460&dpr=1.0', price: 120 },
+            { name: 'Valley Of Flowers Trek', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2017/01/Valley-Of-Flowers-Trek.jpg', price: 300 },
+            { name: 'Chembra Peak Trek', image: 'https://img.traveltriangle.com/blog/wp-content/uploads/2020/01/Chembra-Peak-edited-400x229.jpg', price: 200 },
+            { name: 'Araku Valley Trek', image: 'https://img.traveltriangle.com/blog/wp-content/uploads/2020/01/Araku_Valley-edited-400x229.jpg', price: 300 },
+            { name: 'Har Ki Dun Winter Trek', image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2017/01/Har-Ki-Dun-Winter-Trek1.jpg', price: 140 },
+            
+            { name: 'Kanha National Park, Madhya Pradesh', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2022/04/Kanha-National-Park-1-1024x560.png', price: 50 },
+            { name: 'Kunjkharak Trek, Uttarakhand', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2022/04/Kunjkharak-Trek-Uttarakhand-1024x496.jpg', price: 150 },
+            { name: 'Pali Waterfall Trek, Goa', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2022/04/Pali-Waterfalls-in-Goa-1024x708.png', price: 150 },
+            
+            
+            { name: 'Chembra Trek, Kerala', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2022/04/Chembra-Trek-Kerala.jpg', price: 500 },
+            { name: 'Talle Valley, Arunachal Pradesh', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2022/04/Talle-Valley-Arunachal-Pradesh.jpg', price: 200 },
+            { name: 'Mudumalai, Tamil Nadu', image: 'https://www.revv.co.in/blogs/wp-content/uploads/2022/04/Mudumalai-Tamil-Nadu.jpg', price: 600 },
+            { name: 'Munnar Hiking - Kerala', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/d6/2d/ce/caption.jpg?w=500&h=400&s=1', price: 120 },
+            // Add more destinations in India as needed
+            { name: 'Ranipuram - Kerala', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/e1/8e/77/ranipuram.jpg?w=500&h=400&s=1', price: 120 },
+            { name: 'Neelimala viewpoint - Kerala', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/07/69/b5/64/neelimala-viewpoint.jpg?w=500&h=400&s=1', price: 200 },
+            { name: 'Illithodu - kerala', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/5c/88/bc/img-20180314-134055-largejpg.jpg?w=500&h=-1&s=1', price: 120 },
+            
+            
+            { name: 'Hiking point - Kerala', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/bf/fc/92/hanging-bridge.jpg?w=500&h=-1&s=1', price: 120 },
+            { name: 'Cheppara Rock - Kerala', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/b1/e6/d7/sunrise-at-cheppara-rock.jpg?w=500&h=-1&s=1', price: 150 },
+            { name: 'Queen Charlotte Track - New Zealand', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/queen-charlotte-track-new-zealand-shutterstock_54546187-1024x685.jpg', price: 140 },
+            { name: 'Kalalau Trail - Hawaii', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/kalalau-trail-usa-shutterstock_530597230-1024x683.jpg', price: 200 },
+            { name: 'West Coast Trail - canada', image: 'https://www.roadaffair.com/wp-content/uploads/2017/12/west-coast-trail-canada-shutterstock_402521698-1024x683.jpg', price: 200 },
+        
+        ];
+
+        // Functions from the first script
+        const displayDestinations = (items) => {
+            const destinationList = document.getElementById('destinationList');
+            destinationList.innerHTML = items.map((item) => {
+                return `
+                    <div class='destination'>
+                        <img src='${item.image}' alt='${item.name}'>
+                        <p><strong>${item.name}</strong></p>
+                        <p>Price: $${item.price}.00</p>
+                        <button onclick="bookNow('${item.name}')">Book Now</button>
+                        
+                    </div>
+                `;
+            }).join('');
+        };
+        
+
+        const searchDestinations = () => {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const filteredDestinations = destinations.filter((destination) => {
+                return destination.name.toLowerCase().includes(searchTerm);
+            });
+            displayDestinations(filteredDestinations);
+        };
+
+        // Functions from the second script
+        const searchByBudget = () => {
+            const budget = parseInt(document.getElementById('budgetBar').value);
+            if (!isNaN(budget)) {
+                const filteredDestinations = destinations.filter((destination) => {
+                    return destination.price <= budget;
+                });
+                displayDestinations(filteredDestinations);
+            } else {
+                alert('Please enter a valid budget.');
+            }
+        };
+
+        const bookNow = (destinationName) => {
+            const bookingPageURL = 'payment.html';
+
+
+            const destinationURL = `${bookingPageURL}?destination=${encodeURIComponent(destinationName)}`;
+
+            window.location.href = destinationURL;
+            
+        };
+
+        // Display all destinations initially
+        displayDestinations(destinations);
+    </script>
+    <section id="map-integration">
+      <h2>Map Integration</h2>
+      <div id="map">
+        <!-- Display map with travel history -->
+        <!-- Implement map integration using a mapping library or API -->
+      </div>
+    </section>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuM34lwBDROt_8zt0GirMLgvZgyOMzYHw&callback=initMap" async defer></script>
+    <script>function initMap() {
+      // Check if the browser supports Geolocation
+      if (navigator.geolocation) {
+        // Get the current location
+        navigator.geolocation.getCurrentPosition(function (position) {
+          var userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+    
+          // Create a new map centered at the user's location
+          var map = new google.maps.Map(document.getElementById('map'), {
+            center: userLocation,
+            zoom: 14 // Adjust the zoom level as needed
+          });
+    
+          // Add a marker at the user's location
+          var marker = new google.maps.Marker({
+            position: userLocation,
+            map: map,
+            title: 'Your Location'
+          });
+        }, function () {
+          // Handle Geolocation errors
+          handleLocationError(true, infoWindow, map.getCenter());
+        });
+      } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+      }
+    }
+    
+    // Function to handle Geolocation errors
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+        'Error: The Geolocation service failed.' :
+        'Error: Your browser doesn\'t support geolocation.');
+      infoWindow.open(map);
+    }
+    </script>
+    <footer class="footer">
+        <div class="footer__logo-box">
+          <!-- === Art Direction and Density Switching === -->
+          <picture class="footer__logo">
+            <source
+              srcset="
+              C:\Users\Devarakonda\OneDrive\Desktop\mini project\logo-green-small-1x.png,
+              C:\Users\Devarakonda\OneDrive\Desktop\mini project\logo-green-small-2x.png
+              "
+              media="(max-width: 37.5em)"
+            />
+            <img
+            
+            src="C:\Users\Devarakonda\OneDrive\Desktop\mini project\logo-white.png"/>
+            
+          
+          <center><h1>PATHWAY</h1></center>
+        
+          </picture>
+        </div>
+        <div class="row">
+          <div class="col-1-of-2">
+            <div class="footer__navigation">
+              <ul class="footer__list">
+                
+                <li class="footer__item">
+                  <a href="#" class="footer__link">Contact us</a>
+                </li>
+               
+                <li class="footer__item">
+                  <a href="#" class="footer__link">Privacy policy</a>
+                </li>
+                <li class="footer__item">
+                  <a href="#" class="footer__link">Terms</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+        </div>
+      </footer>
+</body>
+</html>
